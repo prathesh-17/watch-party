@@ -33,7 +33,7 @@ app.use(function(req, res, next) {
     next();
 });
 
-const port = 4000;
+const port = process.env.PORT||4000;
 var server = app.listen(port,function(){
     console.log("listening to 4000");
 });

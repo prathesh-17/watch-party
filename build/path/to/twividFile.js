@@ -82,7 +82,8 @@ var jQueryPlugin = (window.jQueryPlugin = function (ident, func) {
         setTimeout( function(){$(".anim").removeClass("anime"); }, 600);
       }
 
-      var vid = $(video_element).get(0);
+      var vid = $('#vid-file-stream').last()[0];
+
       function ch(src){
         $(".anim-img").attr("src" , "/static-img/"+src);
         // console.log($(".anim-img").get(0),src)
@@ -109,17 +110,19 @@ var jQueryPlugin = (window.jQueryPlugin = function (ident, func) {
         $('.video .chat-output').css({bottom:'-10%',height:'110%'});
         $('.video-slider').css({marginBottom:"-58px"});
       }
-      // console.log($(vid))
+      
+      console.log(vid)
+
       $(vid).on("loadedmetadata",function(){
         console.log("request running... client side",$('#org-video-src').attr('def'))
         if($('#org-video-src').attr('def')!=''){
-            duration = vid.duration
-            socket.emit("join room file", {roomID:window.user.room});
+          duration = vid.duration
+          socket.emit("join room file", {roomID:window.user.room});
         }
         else{
-            socket.emit('request-file',{id:window.fileOwner});
+          socket.emit('request-file',{id:window.fileOwner});
         }
-      })
+    })
       socket.on('req',function(){
           sendData()
       })
