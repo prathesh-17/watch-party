@@ -60,54 +60,9 @@ var jQueryPlugin = (window.jQueryPlugin = function (ident, func) {
       const video_playback_box = $(video).find(".video-playback-box");
       var duration = 0;
         
-      function capture() {
-        var canvas = document.getElementById('canvas');
-        canvas.width = $("video").width();
-        canvas.height = $("video").height();
-        canvas.getContext('2d').drawImage(vid, 0, 0, $("video").width(),$("video").height());
-        var dataURL = canvas.toDataURL();console.log(dataURL)
-        return dataURL;
-      }
-      $('.anim').css({height:$('.anim').width()})
-      function showq(){
-        $(".anim").addClass("anime");
-        setTimeout( function(){$(".anim").removeClass("anime"); }, 600);
-      }
-
-      var vid = $('#vid-file-stream').last()[0];
       
-      function ch(src){
-        $(".anim-img").attr("src" , "/static-img/"+src);
-        // console.log($(".anim-img").get(0),src)
-      }
-      $('.video').hover(hov,ohov);
-      var tio = null;
-      $(".video").mousemove(hov);
-      var ch_bt = 0.5;ch_ht = 100;
 
-      function hov(){
-        if(tio != null){clearTimeout(tio);}
-        $('.video-slider').css({marginBottom:"-7px"});
-        $('.row').css({transform:"translateY(0px)"});
-        $('.video .chat-output').css({bottom:ch_bt+'%',height:ch_ht+'%'});
-        if($(window).width()<800){
-          $('.video-slider').css({marginBottom:"-58px"});
-        }
-        tio = setTimeout( ohov , 3000);
-      }
-
-      function ohov(){
-        if(vid.paused){return;}
-        $('.row').css({transform:"translateY(58px)"});
-        $('.video .chat-output').css({bottom:'-10%',height:'110%'});
-        $('.video-slider').css({marginBottom:"-58px"});
-      }
-      
-      var request_sent = false
-      $(vid).on("loadeddata",LoadedData)
-
-      function LoadedData(){
-        request_sent = true;
+      $(vid).on("loadeddata",function(){
         console.log("request running... client side",$('#org-video-src').attr('def'))
         if($('#org-video-src').attr('def')!=''){
           duration = vid.duration
@@ -116,7 +71,7 @@ var jQueryPlugin = (window.jQueryPlugin = function (ident, func) {
         else{
           socket.emit('request-file',{id:window.fileOwner});
         }
-    }
+    })
       socket.on('req',function(){
           sendData()
       })
@@ -130,17 +85,6 @@ var jQueryPlugin = (window.jQueryPlugin = function (ident, func) {
         else{play();$(vid).on("canplay",function(){console.log('can play running...');play();});}
         if(data.cur!=0){$(video_preview).hide();}
       });
-
-      function sendData(){
-        var data = {cur:vid.currentTime,playbackRate:vid.playbackRate,paused:vid.paused,ended:vid.ended,duration:vid.duration}
-        $('.video-incoming').css({visibility:'visible'});
-        if(!vid.paused){
-          pause();
-          data.cur = vid.currentTime
-        }
-        console.log('vid running')
-        socket.emit('vid',{...data,roomID:window.user.room});
-      }
       socket.on('play',function(){
         video_reset.css({display:'none'})
         $(video_preview).hide();
@@ -153,57 +97,10 @@ var jQueryPlugin = (window.jQueryPlugin = function (ident, func) {
         pause(1);
         showq();
       })
-      function play(k=0) {
-        if(k == 0)
-          socket.emit('play',{roomID:window.user.room,cur:vid.currentTime});
-        ch("play.png");
-        vid.play();
-        video_control_play.hide();
-        video_control_pause.show();
-      }
-      function pause(k=0) {
-        if(k == 0)
-          socket.emit('pause',{roomID:window.user.room,cur:vid.currentTime});
-        ch("pause.png");
-        hov();
-        vid.pause();
-        video_control_pause.hide();
-        video_control_play.show();
-      }
-      function loading() {
-        if (vid.readyState >= 3 ) {
-          video_loading.hide();
-          if(qualch){
-            play();qualch = false;
-          }
-        } else {
-          if(!cur_click){
-            video_loading.show();
-          }
-          if(qualch){
-            pause();
-          }
-        }
-      }
+      
       $(".video_player_controls").hover(hov);
       
-      $(window).on('keydown',function(e){
-        if(e.which == '37'||e.which == '39'){
-          e.preventDefault();
-        }
-      })
-      $(document).keydown(function(e){
-        var tag = e.target.id;
-        // if(tag == 'inp'&&e.which == 13&&inp.val().trim()!=''){
-        //   inp.val("");
-        // }
-        if(e.which<32||e.which>39||tag == 'inp'||tag == 'textarea'){
-          return;
-        }
-        if(e.which == '32'){if(vid.paused){play();$(video_preview).fadeOut(300);}else{pause();}showq();}
-        if(e.which == '37'){replay(5.5);socket.emit('rf',{sk:'-',roomID:window.user.room})}
-        if(e.which == '39'){forward(5.5);socket.emit('rf',{sk:'+',roomID:window.user.room})}
-      })
+      
       socket.on('rf',function(data){
         if(data.sk == '-'){
           replay(5.5);
@@ -212,87 +109,13 @@ var jQueryPlugin = (window.jQueryPlugin = function (ident, func) {
           forward(5.5);
         }
       })
-      function replay(time){
-        vid.currentTime -= 5.5;ch('replay5.png');showq();
-      }
-      function forward(time){
-        ch('forward5.png');showq();
-        if(duration - vid.currentTime < 5.5) {vid.currentTime = duration-0.9;return;}
-        vid.currentTime += 5.5;
-      }
+      
       $(vid).on("progress", function () {
         loading();
       });
-      function voiceOn() {
-        vid.muted = true;
-        $(video_voice_on).hide();
-        $(video_voice_off).show();
-      }
-      function voiceOff() {
-        vid.muted = false;
-        $(video_voice_on).show();
-        $(video_voice_off).hide();
-      }
-      function Fullscreen(element) {
-        ch_bt = -4.5;ch_ht = 105.5;
-        if (element.requestFullscreen) element.requestFullscreen();
-        else if (element.mozRequestFullScreen) element.mozRequestFullScreen();
-        else if (element.webkitRequestFullscreen)
-          element.webkitRequestFullscreen();
-        else if (element.msRequestFullscreen) element.msRequestFullscreen();
-        full_screen_open.hide();
-        full_screen_exit.show();
-      }
-      function exitFullscreen() {
-        ch_bt = 0.5;ch_ht = 100;
-        if (document.exitFullscreen) document.exitFullscreen();
-        else if (document.mozCancelFullScreen) document.mozCancelFullScreen();
-        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
-        else if (document.msExitFullscreen) document.msExitFullscreen();
-        full_screen_open.show();
-        full_screen_exit.hide();
-      }
-      document.addEventListener('fullscreenchange', function(){
-        if(IsFullScreen()){ch_bt = -4.5;ch_ht = 105.5;full_screen_open.hide();
-          full_screen_exit.show();}
-        else{ch_bt = 0.5;ch_ht = 100;full_screen_open.show();
-          full_screen_exit.hide();}  
-      });
-      function IsFullScreen() {
-        var full_screen_element =
-          document.fullscreenElement ||
-          document.webkitFullscreenElement ||
-          document.mozFullScreenElement ||
-          document.msFullscreenElement ||
-          null;
-  
-        if (full_screen_element === null) return false;
-        else return true;
-      }
-      function updateplayer() {
-        if(!request_sent){LoadedData()}
-        loading();if(qualch){return}
-        
-        if(!window.fileOwner){
-            var percentage = (vid.currentTime / duration) * 100;
-            if(vid.buffered.length>0){
-              var per = (vid.buffered.end(0)/duration)*100;
-              video_slider_buffered.css({width:per+1 +"%"});
-            }
-            if(duration-vid.currentTime>1&&vid.currentTime!=0){
-              video_reset.css("display", "none");
-            }
-            video_slider_rail.css({ width: percentage + "%" });
-            video_slider_buffer.css({ left: percentage - 1 + "%" });    
-            video_count_time.text(getFormatedTime(vid.currentTime));
-            socket.emit('update-player',{cur:vid.currentTime,roomID:window.user.room});
-            video_count_fulltime.text(getFormatedTime(vid.duration));
-        }
-        else{
-            video_count_fulltime.text(getFormatedTime(duration));
-        }
-
-      }
+      
+      
+      
       socket.on('skip',function(data){
         skip(data.cur);
       }) 
@@ -302,51 +125,10 @@ var jQueryPlugin = (window.jQueryPlugin = function (ident, func) {
         video_slider_buffer.css({ left: percentage - 1 + "%" });
         video_count_time.text(getFormatedTime(data.cur));
       })
-      function skip(cur = 0) {
-        if(cur == 0){
-          var mouseX = event.pageX - video_slider.offset().left,
-          width = video_slider.outerWidth();
-          var pos = (mouseX / width) * duration;
-          if(duration - pos < 1) {return;}
-          vid.currentTime = pos
-          socket.emit('skip',{cur:pos,roomID:window.user.room});
-        }
-        else{
-          if( duration - cur < 1) {console.log('skip pause running');return;}
-          vid.currentTime = cur;
-        }
-        updateplayer();
-      }
-
-      function getFormatedTime(k) {
-        var seconds = Math.round(k);
-        var minutes = Math.floor(seconds / 60);
-  
-        if (minutes > 0) {
-          seconds -= minutes * 60;
-        }
-        if (seconds.toString().length === 1) {
-          seconds = "0" + seconds;
-        }
-        if (minutes.toString().length === 1) {
-          minutes = "0" + minutes;
-        }
-        return minutes + ":" + seconds;
-      }
-      
+            
       video_slider.mousemove(tooltip);
 
-      function tooltip() {
-        var mouseX = event.pageX - video_slider.offset().left,
-        width = video_slider.outerWidth();
-        var cur = (mouseX / width) * duration;
-        if(cur<0||cur>duration){
-            return;
-        }
-        video_slider_tooltip.html(getFormatedTime(cur));
-        video_slider_tooltip.css({left:Math.min(mouseX,video_slider.width()-video_slider_tooltip.width()-10)});
-        video_slider_tooltip.show();
-      }
+      
       
       video_slider.hover(function(){},function(){video_slider_tooltip.hide()});
 
