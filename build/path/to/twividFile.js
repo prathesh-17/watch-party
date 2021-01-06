@@ -30,11 +30,9 @@ var jQueryPlugin = (window.jQueryPlugin = function (ident, func) {
 
 
 
-  (function () {
-    function twitterVideoPlayer($root) {
       const video = $('.vid-file-main')
       
-      const video_element = $root.find("#vid-file-stream");
+      const video_element = $("#vid-file-stream");
       const video_preview = $(video).find(".video-preview");
       const video_top = $(video).find(".video-top");
       const video_start_btn = $(video).find(".video-start-btn");
@@ -83,7 +81,7 @@ var jQueryPlugin = (window.jQueryPlugin = function (ident, func) {
       }
 
       var vid = $('#vid-file-stream').last()[0];
-
+      
       function ch(src){
         $(".anim-img").attr("src" , "/static-img/"+src);
         // console.log($(".anim-img").get(0),src)
@@ -113,7 +111,7 @@ var jQueryPlugin = (window.jQueryPlugin = function (ident, func) {
       
       console.log(vid)
 
-      $(vid).on("loadedmetadata",function(){
+      $(vid).on("loadeddata",function(){
         console.log("request running... client side",$('#org-video-src').attr('def'))
         if($('#org-video-src').attr('def')!=''){
           duration = vid.duration
@@ -589,16 +587,8 @@ var jQueryPlugin = (window.jQueryPlugin = function (ident, func) {
         
       })
       
-    }
+ 
   
-    $.fn.twitterVideoPlayer = jQueryPlugin(
-      "twitterVideoPlayer",
-      twitterVideoPlayer
-    );
-  })();
-  
-  $(".video").twitterVideoPlayer();
-
-$(".video-start-btn").click(function (){
+$(".video-start-btn").on('click',function (){
     console.log($(window).width(),$(window).height());
 });
