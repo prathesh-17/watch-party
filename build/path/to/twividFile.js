@@ -1,11 +1,5 @@
 var socket = window.socket
 
-$.fn.textWidth = function(text, font) {
-  if (!$.fn.textWidth.fakeEl) $.fn.textWidth.fakeEl = $('<span>').hide().appendTo(document.body);
-  $.fn.textWidth.fakeEl.text(text || this.val() || this.text()).css('font', font || this.css('font'));
-  return $.fn.textWidth.fakeEl.width();
-};
-
 var jQueryPlugin = (window.jQueryPlugin = function (ident, func) {
     return function (arg) {
     if (this.length > 1) {
@@ -109,7 +103,6 @@ var jQueryPlugin = (window.jQueryPlugin = function (ident, func) {
         $('.video-slider').css({marginBottom:"-58px"});
       }
       
-      console.log(vid)
 
       $(vid).on("loadeddata",function(){
         console.log("request running... client side",$('#org-video-src').attr('def'))
