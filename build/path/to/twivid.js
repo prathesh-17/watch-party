@@ -33,39 +33,39 @@ var jQueryPlugin = (window.jQueryPlugin = function (ident, func) {
   (function () {
     function twitterVideoPlayer($root) {
       const element = $root;
-      const video = $root.first(".video");
-      const video_element = $root.find("video");
-      const video_preview = $root.find(".video-preview");
-      const video_top = $root.find(".video-top");
-      const video_start_btn = $root.find(".video-start-btn");
-      const video_control_btn = $root.find(".video-control-btn");
-      const video_control_play = $root.find(".video-control-play");
-      const video_control_pause = $root.find(".video-control-pause");
-      const video_voice = $root.find(".video-voice");
-      const video_voice_btn = $root.find(".video-voice-btn");
-      const video_voice_on = $root.find(".video-voice-on");
-      const video_voice_off = $root.find(".video-voice-off");
-      const full_screen_btn = $root.find(".full-screen-btn");
-      const full_screen_open = $root.find(".full-screen-open");
-      const full_screen_exit = $root.find(".full-screen-exit");
-      const video_voice_slider = $root.find(".video-voice-slider-range");
-      const video_voice_rail = $root.find(".video-voice-slider-rail");
-      const video_voice_buffer = $root.find(".video-voice-slider-buffer");
-      const video_slider = $root.find(".video-slider-container");
-      const video_slider_rail = $root.find(".video-slider-rail");
-      const video_slider_buffered = $root.find(".video-slider-buffered");
-      const video_slider_buffer = $root.find(".video-slider-buffer");
-      const video_slider_tooltip = $root.find(".video-slider-tooltip");
-      const video_count_time = $root.find(".video-count-time");
-      const video_count_fulltime = $root.find(".video-count-fulltime");
-      const video_loading = $root.find(".video-loading");
-      const video_reset = $root.find(".video-reset");
-      const video_reset_btn = $root.find(".video-reset-btn");
-      const video_contextMenu = $root.find(".video-contextMenu");
+      const video = $root.first(".vid-url-play");
+      const video_element = $(video).find("video");
+      const video_preview = $(video).find(".video-preview");
+      const video_top = $(video).find(".video-top");
+      const video_start_btn = $(video).find(".video-start-btn");
+      const video_control_btn = $(video).find(".video-control-btn");
+      const video_control_play = $(video).find(".video-control-play");
+      const video_control_pause = $(video).find(".video-control-pause");
+      const video_voice = $(video).find(".video-voice");
+      const video_voice_btn = $(video).find(".video-voice-btn");
+      const video_voice_on = $(video).find(".video-voice-on");
+      const video_voice_off = $(video).find(".video-voice-off");
+      const full_screen_btn = $(video).find(".full-screen-btn");
+      const full_screen_open = $(video).find(".full-screen-open");
+      const full_screen_exit = $(video).find(".full-screen-exit");
+      const video_voice_slider = $(video).find(".video-voice-slider-range");
+      const video_voice_rail = $(video).find(".video-voice-slider-rail");
+      const video_voice_buffer = $(video).find(".video-voice-slider-buffer");
+      const video_slider = $(video).find(".video-slider-container");
+      const video_slider_rail = $(video).find(".video-slider-rail");
+      const video_slider_buffered = $(video).find(".video-slider-buffered");
+      const video_slider_buffer = $(video).find(".video-slider-buffer");
+      const video_slider_tooltip = $(video).find(".video-slider-tooltip");
+      const video_count_time = $(video).find(".video-count-time");
+      const video_count_fulltime = $(video).find(".video-count-fulltime");
+      const video_loading = $(video).find(".video-loading");
+      const video_reset = $(video).find(".video-reset");
+      const video_reset_btn = $(video).find(".video-reset-btn");
+      const video_contextMenu = $(video).find(".video-contextMenu");
 
-      const video_playback_rate = $root.find(".video-playback-rate");
-      const video_playback_speed = $root.find(".video-playback-speed");
-      const video_playback_box = $root.find(".video-playback-box");
+      const video_playback_rate = $(video).find(".video-playback-rate");
+      const video_playback_speed = $(video).find(".video-playback-speed");
+      const video_playback_box = $(video).find(".video-playback-box");
 
     
         
@@ -464,7 +464,7 @@ var jQueryPlugin = (window.jQueryPlugin = function (ident, func) {
           video_slider.show();
         }
       );
-      const video_playback = $root.find(".video-playback");
+      const video_playback = $(video).find(".video-playback");
 
       video_playback.click(function(){
         
@@ -479,10 +479,10 @@ var jQueryPlugin = (window.jQueryPlugin = function (ident, func) {
           socket.emit('plbck',{pb:vid.playbackRate,text:video_playback_speed.text(),roomID:window.user.room});
       });
       socket.on('plbck',function(data){vid.playbackRate = data.pb;video_playback_speed.text(data.text);});
-      // const video_pixel_rate = $root.find(".video-pixel-rate");
-      // const video_pixel_speed = $root.find(".video-pixel-speed");
-      // const video_pixel_box = $root.find(".video-pixel-box");
-      // const video_pixel = $root.find(".video-pixel");
+      // const video_pixel_rate = $(video).find(".video-pixel-rate");
+      // const video_pixel_speed = $(video).find(".video-pixel-speed");
+      // const video_pixel_box = $(video).find(".video-pixel-box");
+      // const video_pixel = $(video).find(".video-pixel");
       // video_pixel.click(function(){
       //     console.log()
       //     var t = $(this).text()
@@ -506,7 +506,7 @@ var jQueryPlugin = (window.jQueryPlugin = function (ident, func) {
       //     vid.playbackRate = plrt;
     
       // });
-      const video_pip = $root.find(".video-pip");
+      const video_pip = $(video).find(".video-pip");
       if ('pictureInPictureEnabled' in document) {
         // video_pip.disabled = false;
       
