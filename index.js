@@ -7,7 +7,7 @@ const User = require('./Schemas/user');
 const Chat = require('./Schemas/chat');
 var Room = require('./Schemas/room')
 
-//App
+//App 
 var userRouter = require('./Routers/user');
 var roomRouter = require('./Routers/room');
 var chatRouter = require('./Routers/chat');
@@ -22,9 +22,7 @@ var app = express();
 app.options('*', cors());
 app.use(express.json());
 app.use(cors());
-const users = {};
 
-const socketToRoom = {};
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "X-Requested-With");

@@ -111,12 +111,13 @@ var jQueryPlugin = (window.jQueryPlugin = function (ident, func) {
         $('.video-slider').css({marginBottom:"-58px"});
         
       }
-
-      $(vid).on("loadedmetadata",function(){
+      var request_sent = false;
+      $(vid).on("loadedmetadata",LoadMetaData)
+      function LoadMetaData(){
+        request_sent = true;
         console.log("request running... client side")
         socket.emit('request',{id:window.user.user._id,roomID:window.user.room});
-      })
-      
+      }
       socket.on('begin',function(data){
         console.log('begin running...',data.paused);
         vid.currentTime = data.cur;
@@ -263,17 +264,16 @@ var jQueryPlugin = (window.jQueryPlugin = function (ident, func) {
           document.mozFullScreenElement ||
           document.msFullscreenElement ||
           null;
-  
         if (full_screen_element === null) return false;
         else return true;
       }
       function updateplayer() {
+        if(!request_sent){LoadMetaData()}
         loading();if(qualch){return}
         var percentage = (vid.currentTime / vid.duration) * 100;
         if(vid.buffered.length>0){
           var per = (vid.buffered.end(0)/vid.duration)*100;
           video_slider_buffered.css({width:per+1 +"%"});
-        
         }
         if(vid.duration-vid.currentTime>1){
           video_reset.css("display", "none");
