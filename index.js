@@ -95,13 +95,13 @@ io.on('connection',function(socket){
         socket.broadcast.to(roomID).emit('duplicate check',{id})
 
         if(type == 'help')
-            socket.broadcast.to(roomID).emit('all users', [socket.id],mode);
+            socket.broadcast.to(roomID).emit('all users', {users:[socket.id],mode});
         else
-            io.to(socket.id).emit("all users",k);
+            io.to(socket.id).emit("all users",{users:k});
         
     });
     socket.on('all users inducer',data => {
-        io.to(data).emit('all users',socket.id);
+        io.to(data).emit('all users',{users:[socket.id]});
     })
     socket.on("sending signal", payload => {
         io.to(payload.userToSignal).emit('user joined', { signal: payload.signal, callerID: payload.callerID,user:payload.user,vid:payload.vid });
