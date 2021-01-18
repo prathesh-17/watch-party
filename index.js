@@ -98,7 +98,6 @@ io.on('connection',function(socket){
             socket.broadcast.to(roomID).emit('all users', {users:[socket.id],mode});
         else
             io.to(socket.id).emit("all users",{users:k});
-        
     });
     socket.on('all users inducer',data => {
         io.to(data).emit('all users',{users:[socket.id]});
@@ -145,6 +144,7 @@ io.on('connection',function(socket){
             user.save()
         }
         socket.broadcast.to(socket.roomId).emit("user left",socket.id)
+        io.to(socket.id).emit('v disconnection');
     });
 
     socket.on('request',function({roomID}){
