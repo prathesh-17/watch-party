@@ -149,8 +149,7 @@ io.on('connection',function(socket){
 
     socket.on('request',function({roomID}){
         if(io.sockets.adapter.rooms.get(roomID).size>1)
-            io.to(io.sockets.adapter.rooms.get(roomID).values().next().value).emit('req');
-         
+            io.to(io.sockets.adapter.rooms.get(roomID).values().next().value).emit('req');       
     });
     socket.on('request-file',function({id}){
         io.to(id).emit('req')

@@ -1,5 +1,6 @@
-var socket = window.socket
+var socket = window.socket;
 
+console.log('chat socket',socket);
 $.fn.textWidth = function(text, font) {
   if (!$.fn.textWidth.fakeEl) $.fn.textWidth.fakeEl = $('<span>').hide().appendTo(document.body);
   $.fn.textWidth.fakeEl.text(text || this.val() || this.text()).css('font', font || this.css('font'));
@@ -28,13 +29,18 @@ $(".chat-input textarea").on('input change',function(){
     var d=new Date();
     var own = '<div class = "message-owner" style = "color:'+data.color+'">'+data.owner+'</div>'
     
-    var k = '<div class = "message-other" >'+
+    var k = '<div class = "message-other" style = "transform:translateX(0%)" >'+
       own+
       data.msg+'<div class="message-time">'+addZero(d.getHours())+':'+addZero(d.getMinutes())+'</div></div>';
       
+    
+    if($('.chat-date').last().text() != 'Today'){
+      $('.ch-o-bt').append('<div class = "chat-date">Today</div>') 
+    }
     $('.ch-o-bt').append(k);
-    $('.ch-o-bt').scrollTop($('.ch-o-bt')[1].scrollHeight)
-    $('.video .ch-o-bt').scrollTop($('.ch-o-bt')[0].scrollHeight)
+    $('.rchat-holder .ch-o-bt').scrollTop($('.rchat-holder .ch-o-bt')[0].scrollHeight)
+    
+    $('.video .ch-o-bt').scrollTop($('.rchat-holder .ch-o-bt')[0].scrollHeight)
   })
   function addZero(num){
     if(num/10<1){
@@ -54,12 +60,18 @@ $(".chat-input textarea").on('input change',function(){
     var txt = inp.val().trim();
     txt = txt.replaceAll('\n','<br/>');
     var d = new Date();
-    var k = '<div class = "message-mine" >'+txt+'<div class="message-time">'+addZero(d.getHours())+':'+addZero(d.getMinutes())+'</div></div>';
+    var k = '<div class = "message-mine" style = "transform:translateX(0%)">'+txt+'<div class="message-time">'+addZero(d.getHours())+':'+addZero(d.getMinutes())+'</div></div>';
     socket.emit('send-chat',{msg:txt,owner:titleCase(window.user.user.username),roomID:window.user.room,id:window.user.user._id});
+    
+    if($('.chat-date').last().text() != 'Today'){
+     $('.ch-o-bt').append('<div class = "chat-date">Today</div>') 
+    }
     $('.ch-o-bt').append(k);
     var b = $('.ch-o-bt')
-    $('.ch-o-bt').scrollTop(this.scrollHeight)
-    $('.video .ch-o-bt').scrollTop($('.ch-o-bt')[0].scrollHeight)
+    $('.rchat-holder .ch-o-bt').scrollTop($('.rchat-holder .ch-o-bt')[0].scrollHeight)
+    $('.video .ch-o-bt').scrollTop($('.rchat-holder .ch-o-bt')[0].scrollHeight)
+    
+
     inp.val('')
     $('textarea').attr('rows',1);
     $(".ch-o-bt").not('.video .ch-o-bt').css({bottom:31.1+$('textarea').height()+'px'});

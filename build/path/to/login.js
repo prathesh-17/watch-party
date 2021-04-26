@@ -120,7 +120,6 @@ $('.lsub').on('click',function(){
         .then((res)=>{
             localStorage.setItem('id',res.data.user._id);
             localStorage.setItem('vid-token',res.data.token);
-            console.log('getitem : ',localStorage.getItem('id'),localStorage.getItem('vid-token'))
             setTimeout(function(){
                 k.html('');
             },400)
