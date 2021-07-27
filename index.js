@@ -83,18 +83,19 @@ io.on('connection',function(socket){
     socket.on('yes-video-selected',function ({vidUrl,to}) {
         io.to(to).emit('yes-video-selected',vidUrl)
     })
-    socket.on("join room", async({roomID,type,id}) => {
+    socket.on("join room", async({roomID,type,id,mode}) => {
         socket.join(roomID)
         socket.roomId = roomID;
         socket.userId = id;
-        console.log('join room running',socket.id)
+        console.log('join room running',socket.id,io.sockets.adapter.rooms.get(roomID))
         var k = Array.from(io.sockets.adapter.rooms.get(roomID))
         k = k.filter(p => p!=socket.id);
-
         socket.broadcast.to(roomID).emit('duplicate check',{id})
 
-        if(type == 'help')
-            socket.broadcast.to(roomID).emit('all users', [socket.id]);
+        if(type == 'help'){
+            console.log(socket.id)
+            socket.broadcast.to(roomID).emit('all users', {users:[socket.id],mode});
+        }
         else
             io.to(socket.id).emit("all users",k);
         
@@ -104,7 +105,8 @@ io.on('connection',function(socket){
         io.to(payload.userToSignal).emit('user joined', { signal: payload.signal, callerID: payload.callerID,user:payload.user,vid:payload.vid });
     });
     socket.on('help',payload=>{
-        io.to(payload.id).emit('all users', [payload.callerID]);
+        console.log('on help :',payload.callerID)
+        io.to(payload.id).emit('all users', {users:[payload.callerID]});
     })
     socket.on("returning signal", payload => {
         io.to(payload.callerID).emit('receiving returned signal', { signal: payload.signal, id: socket.id,user:payload.user });
