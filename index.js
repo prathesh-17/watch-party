@@ -7,7 +7,7 @@ const User = require('./Schemas/user');
 const Chat = require('./Schemas/chat');
 var Room = require('./Schemas/room')
 
-//App 
+//App
 var userRouter = require('./Routers/user');
 var roomRouter = require('./Routers/room');
 var chatRouter = require('./Routers/chat');
@@ -30,8 +30,7 @@ app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Methods", "PUT, GET, POST, DELETE, OPTIONS");
     next();
 });
-
-const port = process.env.PORT||4000;
+const port = process.env.PORT || 4000;
 var server = app.listen(port,function(){
     console.log("listening to 4000");
 });
@@ -84,7 +83,7 @@ io.on('connection',function(socket){
     socket.on('yes-video-selected',function ({vidUrl,to}) {
         io.to(to).emit('yes-video-selected',vidUrl)
     })
-    socket.on("join room", async({roomID,type,id,mode}) => {
+    socket.on("join room", async({roomID,type,id}) => {
         socket.join(roomID)
         socket.roomId = roomID;
         socket.userId = id;
@@ -95,13 +94,12 @@ io.on('connection',function(socket){
         socket.broadcast.to(roomID).emit('duplicate check',{id})
 
         if(type == 'help')
-            socket.broadcast.to(roomID).emit('all users', {users:[socket.id],mode});
+            socket.broadcast.to(roomID).emit('all users', [socket.id]);
         else
-            io.to(socket.id).emit("all users",{users:k});
+            io.to(socket.id).emit("all users",k);
+        
     });
-    socket.on('all users inducer',data => {
-        io.to(data).emit('all users',{users:[socket.id]});
-    })
+
     socket.on("sending signal", payload => {
         io.to(payload.userToSignal).emit('user joined', { signal: payload.signal, callerID: payload.callerID,user:payload.user,vid:payload.vid });
     });
@@ -124,7 +122,6 @@ io.on('connection',function(socket){
             console.log('summa running...');
             io.to(socket.id).emit("all users file",k);
         }
-        
     });
 
     socket.on("sending signal file", payload => {
@@ -144,12 +141,12 @@ io.on('connection',function(socket){
             user.save()
         }
         socket.broadcast.to(socket.roomId).emit("user left",socket.id)
-        io.to(socket.id).emit('v disconnection');
     });
 
     socket.on('request',function({roomID}){
         if(io.sockets.adapter.rooms.get(roomID).size>1)
-            io.to(io.sockets.adapter.rooms.get(roomID).values().next().value).emit('req');       
+            io.to(io.sockets.adapter.rooms.get(roomID).values().next().value).emit('req');
+         
     });
     socket.on('request-file',function({id}){
         io.to(id).emit('req')
